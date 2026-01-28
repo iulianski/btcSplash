@@ -2,6 +2,7 @@ import ccxt
 import asyncio
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from collections import deque
 from dotenv import load_dotenv
 from telegram import Bot
@@ -20,6 +21,9 @@ exchange = ccxt.bybit()
 
 # Price history storage
 price_history = deque(maxlen=5)  # Keep last 5 prices (5 minutes)
+
+# Vilnius timezone
+VILNIUS_TZ = ZoneInfo("Europe/Vilnius")
 
 def calculate_change(current_price, old_price):
     """Calculate percentage change"""
@@ -43,7 +47,7 @@ async def monitor_price():
             # Fetch current BTC price from Bybit
             ticker = exchange.fetch_ticker('BTC/USDT')
             current_price = ticker['last']
-            timestamp = datetime.now().strftime("%H:%M:%S")
+            timestamp = datetime.now(VILNIUS_TZ).strftime("%H:%M:%S")
             
             # Add to history
             price_history.append({
